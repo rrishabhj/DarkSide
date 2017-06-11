@@ -1,4 +1,4 @@
-package rishabh.example.com.screendimmer2;
+package rishabh.github.com.darkside;
 
 import android.annotation.TargetApi;
 import android.content.ComponentName;
@@ -32,15 +32,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View view) {
 
-                final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, CUSTOM_OVERLAY_PERMISSION_REQUEST_CODE);
-
-            }
-        });
+        getOverlayPermission();
 
         intent = new Intent(this, MyService.class);
 
@@ -73,6 +66,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void getOverlayPermission() {
+
+        final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:" + getPackageName()));
+        startActivityForResult(intent, CUSTOM_OVERLAY_PERMISSION_REQUEST_CODE);
+
+    }
+
     public void buttonSwitch(View view) {
         Button buttonSwitch = (Button) view;
         if (buttonSwitch.getText().toString().equals("START")) {
@@ -86,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
             buttonSwitch.setText("START");
 
             unbindService(serviceConnection);
+            stopService(intent);
+            seekBar.setProgress(0);
+            textView.setText("Brightness Level (0%)");
             status = false;
         }
     }

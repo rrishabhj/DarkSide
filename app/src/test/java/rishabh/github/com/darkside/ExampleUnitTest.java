@@ -1,4 +1,4 @@
-package rishabh.example.com.screendimmer2;
+package rishabh.github.com.darkside;
 
 import org.junit.Test;
 
