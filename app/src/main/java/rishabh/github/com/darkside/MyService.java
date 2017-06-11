@@ -22,9 +22,9 @@ public class MyService extends Service {
 
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
-    int progress=0;
+    float progress=0;
     LinearLayout oView;
-
+    private int colorHash=0x88ff0000;
 
     public class LocalBinder extends Binder {
         MyService getService() {
@@ -36,7 +36,8 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         oView = new LinearLayout(this);
-        oView.setBackgroundColor(Color.argb(progress,255,0,0)); // The translucent red color0x88ff0000
+        oView.setAlpha(progress);
+        oView.setBackgroundColor(colorHash); // The translucent red color0x88ff0000
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
@@ -49,25 +50,30 @@ public class MyService extends Service {
 
         wm.addView(oView, params);
 
-
-        Log.i("tag","onstartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.i("tag","onBind");
-
         return mBinder;
     }
 
     /** method for clients */
-    public void setColor(int prog) {
-        progress=prog;
-        oView.setBackgroundColor(Color.argb(progress,255,0,0)); // The translucent red color0x88ff0000
+    public void setColorProgress(int prog) {
+        progress=prog/255f;
+        oView.setAlpha(progress);
+        oView.setBackgroundColor(colorHash); // The translucent red color0x88ff0000
 
     }
+
+    public void setColor(int hash ){
+
+        colorHash =hash;
+        oView.setAlpha(0.2f);
+        oView.setBackgroundColor(colorHash); // The translucent red color0x88ff0000
+    }
+
 
 
     @Override
@@ -79,19 +85,14 @@ public class MyService extends Service {
 
         Notification notification=new Notification.Builder(MyService.this)
                 .setTicker("tickertacker")
-                .setContentTitle("Night MOde")
-                .setContentText("Click to change brightness")
+                .setContentTitle("Welcomee To The Dark Side")
+                .setContentText("Click to change the brightness")
                 .setPriority(Notification.PRIORITY_LOW)
                 .setSmallIcon(R.drawable.abc1)
                 .setContentIntent(pendingIntent).getNotification();
         notification.flags=Notification.FLAG_NO_CLEAR;
         nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-
         nm.notify(0,notification);
-
-
-
-        Log.i("tag","oncreate");
     }
 
 
@@ -103,7 +104,6 @@ public class MyService extends Service {
             WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
             wm.removeView(oView);
             nm.cancel(0);
-
         }
     }
 

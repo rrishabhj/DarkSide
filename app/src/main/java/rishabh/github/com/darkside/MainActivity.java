@@ -3,8 +3,10 @@ package rishabh.github.com.darkside;
 import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +17,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
+import com.flask.colorpicker.builder.ColorPickerClickListener;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,17 +31,20 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     SeekBar seekBar;
     Intent intent;
+    Button btnColor;
     Boolean status = false, mBound = false;
     private static final int CUSTOM_OVERLAY_PERMISSION_REQUEST_CODE = 101;
     private boolean isShowOverlayPermission = false;
+
+    ColorPickerView colorPickerView;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         getOverlayPermission();
-
+        colorPickerView = (ColorPickerView) findViewById(R.id.color_picker_view);
+        btnColor = (Button) findViewById(R.id.btnColor);
         intent = new Intent(this, MyService.class);
 
         textView = (TextView) findViewById(R.id.textView);
@@ -49,10 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText("Brightness Level (" + prog + "%)");
 
                 if (status) {
-
-                    mService.setColor(prog);
-
-                    // Toast.makeText(MainActivity.this,"Hit The Start Button",Toast.LENGTH_SHORT).show();
+                    mService.setColorProgress(prog);
                 }
             }
 
@@ -64,6 +71,41 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    public void openColorPickerDialog(View view){
+
+        ColorPickerDialogBuilder
+            .with(MainActivity.this)
+            .setTitle("Choose color")
+            .initialColor(Color.LTGRAY)
+            .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+            .density(12)
+            .setOnColorSelectedListener(new OnColorSelectedListener() {
+                @Override
+                public void onColorSelected(int selectedColor) {
+                    Toast.makeText(MainActivity.this,"onColorSelected: 0x" + Integer.toHexString(selectedColor),Toast.LENGTH_LONG).show();
+                }
+            })
+            .setPositiveButton("ok", new ColorPickerClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                    //changeBackgroundColor(selectedColor);
+                    btnColor.setBackgroundColor(selectedColor);
+                    if (status) {
+                        mService.setColor(selectedColor);
+                        btnColor.setBackgroundColor(selectedColor);
+                    }
+                }
+            })
+            .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            })
+            .build()
+            .show();
     }
 
     private void getOverlayPermission() {
