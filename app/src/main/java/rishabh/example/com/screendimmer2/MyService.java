@@ -45,6 +45,8 @@ public class MyService extends Service {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        params.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+
         wm.addView(oView, params);
 
 
