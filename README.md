@@ -7,6 +7,9 @@
 
 DarkSide offers a new way to experience your mobile. It provides you facility to change the android screen color of any app screen to any color with brightness control.
 
+## Downloads
+[DarkSide.apk](https://www.dropbox.com/s/jk4bfrohg1kai6s/darkside.apk?dl=0)
+
 ## Screenshots
 
 ![Image](https://github.com/rrishabhj/DarkSide/blob/master/screenshots/device-2017-06-11-191919.png)
